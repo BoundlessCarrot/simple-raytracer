@@ -7,7 +7,9 @@ const pow = std.math.pow;
 //The set of sphere positions describing the world.
 //Those integers are in fact bit vectors.
 // const sphere_positions: [9]usize = .{ 247570, 280596, 280600, 249748, 18578, 18577, 231184, 16, 16 }; // orginal values
-const sphere_positions: [18]usize = .{ 68552523617, 25820553265, 12910288921, 8334188557, 3227570183, 6455140365, 12910288921, 25820553265, 51572146017, 136575363, 71566723, 58983811, 17040771, 17040771, 17040771, 17040771, 17040771, 4259359 }; //personal message
+const NUM_LINES: usize = 18;
+const NUM_COLUMNS: usize = 36;
+const sphere_positions: [NUM_LINES]usize = .{ 68552523617, 25820553265, 12910288921, 8334188557, 3227570183, 6455140365, 12910288921, 25820553265, 51572146017, 136575363, 71566723, 58983811, 17040771, 17040771, 17040771, 17040771, 17040771, 4259359 }; //personal message
 
 var dprng = std.rand.DefaultPrng.init(0);
 const rand = dprng.random();
@@ -119,9 +121,9 @@ fn trace(orig: vec, dir: vec, t: *f32, n: *vec) usize {
     }
 
     //The world is encoded in G, with array.len lines and the width of your ascii art in columns
-    for (0..36) |k| {
+    for (0..NUM_COLUMNS) |k| {
         // if you change the bit vector list, you need to change the loop range as well
-        for (0..15) |j| {
+        for (0..NUM_LINES - 1) |j| {
             //For this line j, is there a sphere at column j ?
             // const pos = sphere_positions[j];
             if ((sphere_positions[j] & pow(usize, 2, k)) != 0) {
