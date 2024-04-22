@@ -11,4 +11,4 @@ Take note of the number of columns and rows it tells you your message has, you'l
 
 Note that the bigger your message the longer the rendering is going to take, and it already takes a while as is :)
 
-![rendered img](/ekr.ppm)
+![rendered img](/ekr.png)
