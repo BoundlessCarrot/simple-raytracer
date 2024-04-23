@@ -3,40 +3,49 @@ def ascii_to_bit_vectors(ascii_art):
     rows = ascii_art.strip().split('\n')
 
     # Initialize an empty list to store the bit vectors
-    bit_vectors = []
+    bit_vectors = [0]
+
+    longest_vec = 0
+
     # Iterate over each row
     for row in rows:
         # Skip empty rows
-        if not row.strip():
+        if not row:
             continue
 
-        # Initialize the bit vector for this row
-        bit_vector = 0
+        row_copy = row.replace(' ', '0').replace('1', '1')
 
-        # Iterate over each character in the row
-        for i, char in enumerate(row.strip()):
-            # Check if the character represents a set bit
-            if char == '1':
-                bit_vector |= (1 << (len(row.strip()) - i - 1))
+        if len(row_copy) > longest_vec:
+            longest_vec = len(row_copy)
+
+        # Pad the row with zeros to make it the same length as the longest row
+        row_copy = row_copy.ljust(longest_vec, '0')
+
+        bit_vector = int(row_copy, 2)
+        print(f"Row:\t{row}, Bit vector:\t{bit_vector}, Row copy:\t{row_copy}")
+
         # Append the bit vector to the list
         bit_vectors.append(bit_vector)
-    return bit_vectors
+    print()
+    bit_vectors.append(0)
+    bit_vectors.reverse()
+
+    return bit_vectors, longest_vec
 
 # Example usage
 # ascii_art = """\
-#    /*
-#  
-#    16                    1    
-#    16                    1    
-#    231184   111    111   1    
-#    18577       1  1   1  1   1
-#    18578       1  1   1  1  1 
-#    249748   1111  11111  1 1  
-#    280600  1   1  1      11   
-#    280596  1   1  1      1 1  
-#    247570   1111   111   1  1 
-#  
-#    */"""
+#
+#                 1    
+#                 1    
+#    1111   111   1    
+#       1  1   1  1   1
+#       1  1   1  1  1 
+#    1111  11111  1 1  
+#   1   1  1      11   
+#   1   1  1      1 1  
+#    1111   111   1  1 
+#
+# """
 
 # ascii_art = """\
 # 11111111 11     11   1111111 11    1
@@ -74,18 +83,20 @@ def ascii_to_bit_vectors(ascii_art):
 # """
 
 ascii_art = """\
-     1   11111   1111111   11111 
-     1  1           1     1     1
-     1  1           1     1     1
-     1  1           1     111111 
-     1   11111      1     11     
-     1        1     1     1 1    
-1    1        1     1     1  1   
-1    1        1     1     1   1  
- 1111   111111      1     1    1 
+
+      1   11111   1111111   11111 
+      1  1           1     1     1
+      1  1           1     1     1
+      1  1           1     111111 
+      1   11111      1     11     
+      1        1     1     1 1    
+ 1    1        1     1     1  1   
+ 1    1        1     1     1   1  
+  1111   111111      1     1    1 
+
 """
 
-bit_vectors = ascii_to_bit_vectors(ascii_art)
-
+bit_vectors, longest_vec = ascii_to_bit_vectors(ascii_art)
 # Print the resulting bit vectors
-print(f"Bit vector: {bit_vectors}, number of lines: {len(bit_vectors)}, number of columns: {len(ascii_art.strip().split('\n')[0].strip())}")
+# longest_vec = len(ascii_art.strip().split('\n')[4])
+print(f"Bit vector: {bit_vectors}, number of lines: {len(bit_vectors)}, number of columns: {longest_vec}")

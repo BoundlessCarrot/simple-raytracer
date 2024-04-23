@@ -11,7 +11,7 @@ Take note of the number of columns and rows it tells you your message has, you'l
 
 Note that the bigger your message the longer the rendering is going to take, and it already takes a while as is :)
 
-![rendered img](/ekr.png)
+![rendered img](/jstr.png)
 
 ## Usage
 
@@ -19,4 +19,8 @@ Note that the bigger your message the longer the rendering is going to take, and
      - You can create your own art [here](https://asciiflow.com/#/)
   2. Run with `zig build-exe raytracer.zig && ./raytracer > img.ppm`
      - You can also use the `-O ReleaseFast` flag to speed up the execution
-  3. Then, with imagemagick installed, run `convert img.ppm img.png` to convert the image to a png format 
+  3. Then, with imagemagick installed, run `convert img.ppm img.png` to convert the image to a png format
+
+## Sources
+  - [0] [Original source](https://fabiensanglard.net/rayTracing_back_of_business_card/)
+  - [1] [Explaining some vars](https://news.ycombinator.com/item?id=6425965)

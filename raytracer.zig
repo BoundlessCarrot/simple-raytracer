@@ -6,12 +6,17 @@ const std = @import("std");
 const pr = std.io.getStdOut().writer();
 const pow = std.math.pow;
 
+// picture size constants
+const WIDTH: usize = 1080;
+const HEIGHT: usize = 720;
+
 //The set of sphere positions describing the world.
 //Those integers are in fact bit vectors.
 //Original message
-const NUM_LINES: usize = 9;
-const NUM_COLUMNS: usize = 16;
-const sphere_positions: [NUM_LINES]usize = .{ 247570, 280596, 280600, 249748, 18578, 18577, 231184, 16, 16 }; // orginal values
+// const NUM_LINES: usize = 11;
+// const NUM_COLUMNS: usize = 21;
+// const sphere_positions: [NUM_LINES]usize = .{ 0, 247570, 280596, 280600, 249748, 18578, 18577, 231184, 16, 16, 0 }; // orginal values
+// const sphere_positions: [NUM_LINES]usize = .{ 0, 247570, 280596, 280600, 249748, 18578, 18577, 247568, 16, 16, 0 };
 
 //personal message
 // const NUM_LINES: usize = 18;
@@ -19,9 +24,9 @@ const sphere_positions: [NUM_LINES]usize = .{ 247570, 280596, 280600, 249748, 18
 // const sphere_positions: [NUM_LINES]usize = .{ 68552523617, 25820553265, 12910288921, 8334188557, 3227570183, 6455140365, 12910288921, 25820553265, 51572146017, 136575363, 71566723, 58983811, 17040771, 17040771, 17040771, 17040771, 17040771, 4259359 };
 
 // welcome github message
-// const NUM_LINES: usize = 9;
-// const NUM_COLUMNS: usize = 27;
-// const sphere_positions: [NUM_LINES]usize = .{ 75267871, 150999105, 150999105, 75499583, 4702339, 8405253, 553681417, 1107362833, 2029783073 };
+const NUM_LINES: usize = 11;
+const NUM_COLUMNS: usize = 34;
+const sphere_positions: [NUM_LINES]usize = .{ 0, 4059566146, 4429451332, 4429451336, 134484048, 150474848, 150999166, 150999105, 150999105, 150535742, 0 };
 
 // random number generator
 var dprng = std.rand.DefaultPrng.init(0);
@@ -134,16 +139,12 @@ fn trace(orig: vec, dir: vec, t: *f32, n: *vec) usize {
     }
 
     //The world is encoded in G, with array.len lines and the width of your ascii art in columns
-    var k: usize = NUM_COLUMNS;
-    while (k > 0) : (k -= 1) {
-        // for (0..NUM_COLUMNS) |k| {
+    for (0..NUM_COLUMNS) |k| {
         // if you change the bit vector list, you need to change the loop range as well
-        var j: usize = NUM_LINES;
-        while (j > 0) : (j -= 1) {
-            // for (0..NUM_LINES - 1) |j| {
+        for (sphere_positions, 0..) |sphere_pos, j| {
             //For this line j, is there a sphere at column j ?
             // const pos = sphere_positions[j];
-            if ((sphere_positions[j] & pow(usize, 2, k)) != 0) {
+            if ((sphere_pos & pow(usize, 2, k)) != 0) {
                 // There is a sphere but does the ray hits it ?
                 var spr: vec = orig.add(vec.init(-@as(f32, @floatFromInt(k)), 0.0, -@as(f32, @floatFromInt(j)) - 4.0));
                 var b: f32 = spr.dot(dir);
@@ -169,7 +170,7 @@ fn trace(orig: vec, dir: vec, t: *f32, n: *vec) usize {
 
 pub fn main() !void {
     // image header
-    try pr.print("P3 1024 512 255\n", .{});
+    try pr.print("P3 {d} {d} 255\n", .{ WIDTH, HEIGHT });
 
     var g: vec = vec.init(-6.0, -16.0, 0.0).norm(); // camera direction
     var a: vec = vec.init(0.0, 0.0, 1.0).cross(g).norm().scale(0.002); // camera up vector
@@ -177,9 +178,9 @@ pub fn main() !void {
     var c: vec = (a.add(b)).scale(-256.0).add(g); // the offset from the eye point (ignoring the lens perturbation `t`) to the corner of the focal plane (see [1])
 
     // iterate over each pixel
-    var y: usize = 512;
+    var y: usize = HEIGHT;
     while (y > 0) : (y -= 1) {
-        var x: usize = 1024;
+        var x: usize = WIDTH;
         while (x > 0) : (x -= 1) {
             var p: vec = vec.init(13.0, 13.0, 13.0); // the color of the pixel
 
@@ -202,7 +203,3 @@ pub fn main() !void {
         }
     }
 }
-
-// Sources
-// [0] https://fabiensanglard.net/rayTracing_back_of_business_card/
-// [1] https://news.ycombinator.com/item?id=6425965
