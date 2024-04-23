@@ -1,7 +1,7 @@
 # simple-raytracer
 A simple translation of the famous business card raytracer (found [here](https://fabiensanglard.net/rayTracing_back_of_business_card/))
 
-You can also now have custom messages by generating the bit vectors from ascii art using the python script.
+You can also have custom messages by generating the bit vectors from ascii art using the python script.
 
 Take note of the number of columns and rows it tells you your message has, you'll need to change:
 
@@ -12,3 +12,11 @@ Take note of the number of columns and rows it tells you your message has, you'l
 Note that the bigger your message the longer the rendering is going to take, and it already takes a while as is :)
 
 ![rendered img](/ekr.png)
+
+## Usage
+
+  1. Get your `sphere_positions`, `NUM_COLUMNS`, and `NUM_LINES` from the python script and place them into the relevant zig variables
+     - You can create your own art [here](https://asciiflow.com/#/)
+  2. Run with `zig build-exe raytracer.zig && ./raytracer > img.ppm`
+     - You can also use the `-O ReleaseFast` flag to speed up the execution
+  3. Then, with imagemagick installed, run `convert img.ppm img.png` to convert the image to a png format 

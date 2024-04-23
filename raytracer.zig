@@ -1,4 +1,6 @@
-// Run with zig build-exe raytracer.zig && ./raytracer > img.ppm
+// Run with `zig build-exe raytracer.zig && ./raytracer > img.ppm`
+//  you can also use the `-O ReleaseFast` flag to speed up the execution
+// Then, with imagemagick installed, run `convert img.ppm img.png` to convert the image to a png format
 
 const std = @import("std");
 const pr = std.io.getStdOut().writer();
@@ -6,11 +8,22 @@ const pow = std.math.pow;
 
 //The set of sphere positions describing the world.
 //Those integers are in fact bit vectors.
-// const sphere_positions: [9]usize = .{ 247570, 280596, 280600, 249748, 18578, 18577, 231184, 16, 16 }; // orginal values
-const NUM_LINES: usize = 18;
-const NUM_COLUMNS: usize = 36;
-const sphere_positions: [NUM_LINES]usize = .{ 68552523617, 25820553265, 12910288921, 8334188557, 3227570183, 6455140365, 12910288921, 25820553265, 51572146017, 136575363, 71566723, 58983811, 17040771, 17040771, 17040771, 17040771, 17040771, 4259359 }; //personal message
+//Original message
+const NUM_LINES: usize = 9;
+const NUM_COLUMNS: usize = 16;
+const sphere_positions: [NUM_LINES]usize = .{ 247570, 280596, 280600, 249748, 18578, 18577, 231184, 16, 16 }; // orginal values
 
+//personal message
+// const NUM_LINES: usize = 18;
+// const NUM_COLUMNS: usize = 36;
+// const sphere_positions: [NUM_LINES]usize = .{ 68552523617, 25820553265, 12910288921, 8334188557, 3227570183, 6455140365, 12910288921, 25820553265, 51572146017, 136575363, 71566723, 58983811, 17040771, 17040771, 17040771, 17040771, 17040771, 4259359 };
+
+// welcome github message
+// const NUM_LINES: usize = 9;
+// const NUM_COLUMNS: usize = 27;
+// const sphere_positions: [NUM_LINES]usize = .{ 75267871, 150999105, 150999105, 75499583, 4702339, 8405253, 553681417, 1107362833, 2029783073 };
+
+// random number generator
 var dprng = std.rand.DefaultPrng.init(0);
 const rand = dprng.random();
 
@@ -121,9 +134,13 @@ fn trace(orig: vec, dir: vec, t: *f32, n: *vec) usize {
     }
 
     //The world is encoded in G, with array.len lines and the width of your ascii art in columns
-    for (0..NUM_COLUMNS) |k| {
+    var k: usize = NUM_COLUMNS;
+    while (k > 0) : (k -= 1) {
+        // for (0..NUM_COLUMNS) |k| {
         // if you change the bit vector list, you need to change the loop range as well
-        for (0..NUM_LINES - 1) |j| {
+        var j: usize = NUM_LINES;
+        while (j > 0) : (j -= 1) {
+            // for (0..NUM_LINES - 1) |j| {
             //For this line j, is there a sphere at column j ?
             // const pos = sphere_positions[j];
             if ((sphere_positions[j] & pow(usize, 2, k)) != 0) {
@@ -152,7 +169,7 @@ fn trace(orig: vec, dir: vec, t: *f32, n: *vec) usize {
 
 pub fn main() !void {
     // image header
-    try pr.print("P3 512 512 255\n", .{});
+    try pr.print("P3 1024 512 255\n", .{});
 
     var g: vec = vec.init(-6.0, -16.0, 0.0).norm(); // camera direction
     var a: vec = vec.init(0.0, 0.0, 1.0).cross(g).norm().scale(0.002); // camera up vector
@@ -161,9 +178,8 @@ pub fn main() !void {
 
     // iterate over each pixel
     var y: usize = 512;
-
     while (y > 0) : (y -= 1) {
-        var x: usize = 512;
+        var x: usize = 1024;
         while (x > 0) : (x -= 1) {
             var p: vec = vec.init(13.0, 13.0, 13.0); // the color of the pixel
 
