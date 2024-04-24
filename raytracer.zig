@@ -1,36 +1,32 @@
 // Run with `zig build-exe raytracer.zig && ./raytracer > img.ppm`
-//  you can also use the `-O ReleaseFast` flag to speed up the execution
+// you can also use the `-O ReleaseFast` flag to speed up the execution
 // Then, with imagemagick installed, run `convert img.ppm img.png` to convert the image to a png format
 
 const std = @import("std");
 const pr = std.io.getStdOut().writer();
 const pow = std.math.pow;
 
+// random number generator
+var dprng = std.rand.DefaultPrng.init(0);
+const rand = dprng.random();
+
 // picture size constants
 const WIDTH: usize = 1080;
 const HEIGHT: usize = 720;
 
-//The set of sphere positions describing the world.
-//Those integers are in fact bit vectors.
-//Original message
+// The set of sphere positions describing the world.
+// Those integers are in fact bit vectors.
+
+// Original message
 // const NUM_LINES: usize = 11;
 // const NUM_COLUMNS: usize = 21;
 // const sphere_positions: [NUM_LINES]usize = .{ 0, 247570, 280596, 280600, 249748, 18578, 18577, 231184, 16, 16, 0 }; // orginal values
-// const sphere_positions: [NUM_LINES]usize = .{ 0, 247570, 280596, 280600, 249748, 18578, 18577, 247568, 16, 16, 0 };
+// const sphere_positions: [NUM_LINES]usize = .{ 0, 247570, 280596, 280600, 249748, 18578, 18577, 247568, 16, 16, 0 }; // bit vector script values for the original message
 
-//personal message
-// const NUM_LINES: usize = 18;
-// const NUM_COLUMNS: usize = 36;
-// const sphere_positions: [NUM_LINES]usize = .{ 68552523617, 25820553265, 12910288921, 8334188557, 3227570183, 6455140365, 12910288921, 25820553265, 51572146017, 136575363, 71566723, 58983811, 17040771, 17040771, 17040771, 17040771, 17040771, 4259359 };
-
-// welcome github message
+// jstr
 const NUM_LINES: usize = 11;
 const NUM_COLUMNS: usize = 34;
 const sphere_positions: [NUM_LINES]usize = .{ 0, 4059566146, 4429451332, 4429451336, 134484048, 150474848, 150999166, 150999105, 150999105, 150535742, 0 };
-
-// random number generator
-var dprng = std.rand.DefaultPrng.init(0);
-const rand = dprng.random();
 
 /// A 3D vector
 const vec = struct {
@@ -89,7 +85,7 @@ fn sample(orig: vec, dir: vec) vec {
     var n: vec = vec.empty();
 
     // Find the closest intersection
-    var m: usize = trace(orig, dir, &t, &n);
+    const m: usize = trace(orig, dir, &t, &n);
     if (m == 0) {
         // No intersection
         return vec.init(0.7, 0.6, 1.0).scale(pow(f32, 1.0 - dir.z, 4.0));
@@ -109,7 +105,7 @@ fn sample(orig: vec, dir: vec) vec {
     }
 
     // Calculate the color 'p' with diffuse and specular component
-    var p: f32 = pow(f32, l.dot(r.scale(@floatFromInt(@intFromBool(b > 0.0)))), 99.0);
+    const p: f32 = pow(f32, l.dot(r.scale(@floatFromInt(@intFromBool(b > 0.0)))), 99.0);
 
     if (m == 1) {
         h = h.scale(0.2); //No sphere was hit and the ray was going downward: Generate a floor color
@@ -131,7 +127,7 @@ fn sample(orig: vec, dir: vec) vec {
 fn trace(orig: vec, dir: vec, t: *f32, n: *vec) usize {
     t.* = 1e9;
     var m: usize = 0;
-    var p: f32 = -orig.z / dir.z;
+    const p: f32 = -orig.z / dir.z;
     if (0.01 < p) {
         t.* = p;
         n.* = vec.init(0.0, 0.0, 1.0);
@@ -147,13 +143,13 @@ fn trace(orig: vec, dir: vec, t: *f32, n: *vec) usize {
             if ((sphere_pos & pow(usize, 2, k)) != 0) {
                 // There is a sphere but does the ray hits it ?
                 var spr: vec = orig.add(vec.init(-@as(f32, @floatFromInt(k)), 0.0, -@as(f32, @floatFromInt(j)) - 4.0));
-                var b: f32 = spr.dot(dir);
-                var c: f32 = spr.dot(spr) - 1.0;
-                var q: f32 = b * b - c;
+                const b: f32 = spr.dot(dir);
+                const c: f32 = spr.dot(spr) - 1.0;
+                const q: f32 = b * b - c;
                 //Does the ray hit the sphere ?
                 if (q > 0.0) {
                     //It does, compute the distance camera-sphere
-                    var s: f32 = -b - @sqrt(q);
+                    const s: f32 = -b - @sqrt(q);
                     if (s < t.* and s > 0.01) {
                         // So far this is the minimum distance, save it. And also
                         // compute the bouncing ray vector into 'n'
@@ -175,7 +171,7 @@ pub fn main() !void {
     var g: vec = vec.init(-6.0, -16.0, 0.0).norm(); // camera direction
     var a: vec = vec.init(0.0, 0.0, 1.0).cross(g).norm().scale(0.002); // camera up vector
     var b: vec = g.cross(a).norm().scale(0.002); // camera right vector
-    var c: vec = (a.add(b)).scale(-256.0).add(g); // the offset from the eye point (ignoring the lens perturbation `t`) to the corner of the focal plane (see [1])
+    const c: vec = (a.add(b)).scale(-256.0).add(g); // the offset from the eye point (ignoring the lens perturbation `t`) to the corner of the focal plane (see [1])
 
     // iterate over each pixel
     var y: usize = HEIGHT;
@@ -192,10 +188,10 @@ pub fn main() !void {
 
                 // Set the camera focal point v(17,16,8) and Cast the ray
                 // Accumulate the color returned in the p variable
-                var ray_orig: vec = vec.init(17.0, 16.0, 8.0).add(t);
+                const ray_orig: vec = vec.init(17.0, 16.0, 8.0).add(t);
                 const rand1 = rand.float(f32) + @as(f32, @floatFromInt(x));
                 const rand2 = rand.float(f32) + @as(f32, @floatFromInt(y));
-                var ray_dir: vec = t.scale(-1.0).add(a.scale(rand1).add(b.scale(rand2)).add(c).scale(16.0)).norm();
+                const ray_dir: vec = t.scale(-1.0).add(a.scale(rand1).add(b.scale(rand2)).add(c).scale(16.0)).norm();
                 p = sample(ray_orig, ray_dir).scale(3.5).add(p);
             }
 
