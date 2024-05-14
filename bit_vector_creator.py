@@ -23,7 +23,7 @@ def ascii_to_bit_vectors(ascii_art):
         #     row_copy = row_copy.center(usize_offset, '0')
 
         bit_vector = int(row_copy, 2)
-        print(f"Row: {row},\tBit vector: {bit_vector},\tRow copy: {row_copy}")
+        print(f"Row: {row.rjust(longest_vec) if i == 0 else row.ljust(longest_vec)},\tBit vector: {bit_vector},\tRow copy: {row_copy}")
 
         # Append the bit vector to the list
         bit_vectors.append(bit_vector)
