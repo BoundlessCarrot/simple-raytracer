@@ -5,16 +5,7 @@ def ascii_to_bit_vectors(ascii_art):
     # Initialize an empty list to store the bit vectors
     bit_vectors = [0]
 
-    longest_vec = 0
-
-# Iterate over each row
-    for row in rows:
-        # Skip empty rows
-        if not row:
-            continue
-
-        if len(row) > longest_vec:
-            longest_vec = len(row)
+    longest_vec = max(len(row) for row in rows if row)
 
     # Iterate over each row
     for i, row in enumerate(rows):
