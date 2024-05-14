@@ -7,19 +7,28 @@ def ascii_to_bit_vectors(ascii_art):
 
     longest_vec = 0
 
-    # Iterate over each row
+# Iterate over each row
     for row in rows:
+        # Skip empty rows
+        if not row:
+            continue
+
+        if len(row) > longest_vec:
+            longest_vec = len(row)
+
+    # Iterate over each row
+    for i, row in enumerate(rows):
         # Skip empty rows
         if not row:
             continue
 
         row_copy = row.replace(' ', '0').replace('1', '1')
 
-        if len(row_copy) > longest_vec:
-            longest_vec = len(row_copy)
-
         # Pad the row with zeros to make it the same length as the longest row
-        row_copy = row_copy.ljust(longest_vec, '0')
+        if i == 0:
+            row_copy = row_copy.ljust(longest_vec, '0')
+        elif i == len(rows) - 1:
+            row_copy = row_copy.rjust(longest_vec, '0')
 
         bit_vector = int(row_copy, 2)
         print(f"Row:\t{row}, Bit vector:\t{bit_vector}, Row copy:\t{row_copy}")
