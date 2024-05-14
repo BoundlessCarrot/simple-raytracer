@@ -16,10 +16,7 @@ def ascii_to_bit_vectors(ascii_art):
         row_copy = row.replace(' ', '0').replace('1', '1')
 
         # Pad the row with zeros to make it the same length as the longest row
-        if i == 0:
-            row_copy = row_copy.ljust(longest_vec, '0')
-        elif i == len(rows) - 1:
-            row_copy = row_copy.rjust(longest_vec, '0')
+        row_copy = row_copy.rjust(longest_vec, '0') if i == 0 else row_copy.ljust(longest_vec, '0')
 
         bit_vector = int(row_copy, 2)
         print(f"Row: {row},\tBit vector: {bit_vector},\tRow copy: {row_copy}")
